@@ -11,24 +11,34 @@ export class BudgetLimitStrategy implements AuditStrategy {
     transactions: Transaction[],
     customParam?: string,
   ): Promise<string> {
+
     // TODO: Feature 1 - Implement this strategy.
+
     // 1. Call BudgetService.getCategoryBudgets() asynchronously.
-    async function getCatBudgets(): Promise<T> {
-      try {
-        const result = await BudgetService.getCategoryBudgets();
-        return result;
-      }
-      catch(error){
-        throw new Error('Operation not possible');
+    let budgets;
+    try {
+      budgets = await BudgetService.getCategoryBudgets();
+    }
+    catch (error){
+      throw new Error("Failed to retrieve budgets");
+    }
+
+    // 2. Group expenses (amounts < 0) by category and compute total spending for each category.
+    const spending: Record<string, number> = {};
+
+    for (const transaction of transactions) {
+      if (transaction.amount < 0){
+        const expense = Math.abs(transaction.amount);
+        if (spending[transaction.category] === undefined){
+          spending[transaction.category] = expense;
+        }
+        else {
+          spending[transaction.category] += expense;
+        }
       }
     }
-    // 2. Group expenses (amounts < 0) by category and compute total spending for each category.
-      //map arrow function of getCatBudgets -> new array of sorted values
-        const mappedCategories = getCatBudgets.map((amounts) => amounts < 0);
-      //make new array of summed total spending of each category
-        const summedTotals = mappedCategories.map((x) => );
     // 3. Compare spending against the fetched limits.
-      //array of booleans, true if spending > limits
+      
     // 4. Identify overages (categories where spending exceeds the budget).
       //array of bools fulfills this request
       const overageArr = 
