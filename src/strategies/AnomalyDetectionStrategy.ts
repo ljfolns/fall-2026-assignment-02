@@ -42,7 +42,7 @@ export class AnomalyDetectionStrategy implements AuditStrategy {
       rules.flaggedStatuses.includes(transaction.status),
     );
 
-    // 5. Calculate total flagged value and anomaly rates.
+    // 5. Calculate the total number of anomalous transactions.
     const anomalousIds = new Set<string>();
 
     for (const transaction of outliers) {
@@ -61,11 +61,10 @@ export class AnomalyDetectionStrategy implements AuditStrategy {
 
     const anomalyCount = anomalousIds.size;
 
-    const anomalyPercentage =
-      transactions.length === 0 ? 0 : (anomalyCount / transactions.length) * 100;
-
-    // 6. Format and return a text-based audit report of anomalies, duplicate sets, and totals.
+    // 6. Calculate the percentage of total transactions that are anomalous.
+    const anomalyPercentage = transactions.length === 0 ? 0 : (anomalyCount / transactions.length) * 100;
     
+    // 7. Format and return a text-based audit report of anomalies, duplicate sets, and totals.
     let auditReport = `Audit Report for ${this.name}:\n\n`;
     auditReport += `Outlier Transactions:\n`;
     for (const transaction of outliers) {
