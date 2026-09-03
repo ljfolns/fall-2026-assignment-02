@@ -1,4 +1,4 @@
-import { Transaction } from '../models.js';
+import { TaxConfig, Transaction } from '../models.js';
 import { TaxConfigService } from '../services/TaxConfigService.js';
 import { AuditStrategy } from './AuditStrategy.js';
 
@@ -19,6 +19,31 @@ export class TaxDeductionStrategy implements AuditStrategy {
     // 5. Estimate sales tax/VAT paid on NON-deductible expenses using standard tax rate.
     // 6. Format and return a text-based audit report detailing total deductions, savings, VAT estimates, and eligible transactions.
 
-    throw new Error('Method not implemented.');
+    let config: TaxConfig = await TaxConfigService.getTaxConfig();
+    let deductibles: Transaction[] = transactions.filter((txn) => {
+      return txn.amount < 0 && config.deductibleCategories.includes(txn.category);
+    });
+    let nonDeductibles: Transaction[] = transactions.filter((txn) => {
+      return !(txn.amount < 0 && config.deductibleCategories.includes(txn.category));
+    });
+    let sum: number = 0;
+    for (let txn of deductibles) {
+      sum += txn.amount;
+    }
+    let savings: number = (sum * config.standardTaxRate) * -1;
+    let taxPaid: number = nonDeductibles.length * config.standardTaxRate;
+    sum *= -1;
+
+    let bigStr: string = "";
+    for (let txn of deductibles) {
+      bigStr += `${txn.id} | ${txn.date} | ${txn.amount} | ${txn.category} | ${txn.description}\n`
+    }
+
+    bigStr += "======== TOTALS ========\n"
+    bigStr += `Deductions: $${sum}.00\n`
+    bigStr += `Savings: $${savings}.00\n`
+    bigStr += `Tax paid: $${taxPaid}`
+
+    return bigStr;
   }
 }
