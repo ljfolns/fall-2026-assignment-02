@@ -37,11 +37,31 @@ export class BudgetLimitStrategy implements AuditStrategy {
         }
       }
     }
+
     // 3. Compare spending against the fetched limits.
-      
+    
+    const overages = [];
+
+    for (const category in budgets){
+      const limit = budgets[category];
+      const spent = spending[category] || 0;
+
     // 4. Identify overages (categories where spending exceeds the budget).
-      //array of bools fulfills this request
-      const overageArr = 
+
+      if (spent > limit){
+        const overage = spent - limit;
+        const percentage = limit > 0 ? (spent/limit) * 100 : 100;
+
+        overages.push({
+          category: category,
+          budget: limit,
+          spent: spent,
+          overage: overage,
+          percentage: percentage
+        });
+      }
+    }
+    
     // 5. Format and return a text-based audit report outlining limits, actuals, overage amounts, percentages, and lists of transactions causing the overage.
       //make arr of transactions causing overages
       const audit = "Limits: \nActuals: \nOverage Amounts: \nPercentages: \nTransactions causing overages:" `${overageArr}`;
