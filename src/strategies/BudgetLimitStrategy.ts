@@ -39,7 +39,6 @@ export class BudgetLimitStrategy implements AuditStrategy {
     }
 
     // 3. Compare spending against the fetched limits.
-    
     const overages = [];
 
     for (const category in budgets){
@@ -47,7 +46,6 @@ export class BudgetLimitStrategy implements AuditStrategy {
       const spent = spending[category] || 0;
 
     // 4. Identify overages (categories where spending exceeds the budget).
-
       if (spent > limit){
         const overage = spent - limit;
         const percentage = limit > 0 ? (spent/limit) * 100 : 100;
@@ -63,9 +61,37 @@ export class BudgetLimitStrategy implements AuditStrategy {
     }
     
     // 5. Format and return a text-based audit report outlining limits, actuals, overage amounts, percentages, and lists of transactions causing the overage.
-      //make arr of transactions causing overages
-      const audit = "Limits: \nActuals: \nOverage Amounts: \nPercentages: \nTransactions causing overages:" `${overageArr}`;
+    const overageCategories = new Set(overages.map((o) => o.category));
+    const contributingTransactions = transactions.filter((transaction) => transaction.amount < 0 && overageCategories.has(transaction.category));
 
-    throw new Error('Method not implemented.');
+    let report = 'Budget Audit Report:\nCategory Summaries:';
+    for (const category in budgets){
+      const limit = budgets[category];
+      const spent = spending[category] || 0;
+      report += `* ${category}: Budget = $${limit.toFixed(2)}, Spent = $${spent.toFixed(2)}\n`;
+    }
+
+    report += 'Categories over budget:\n';
+    if (overages.length === 0){
+      report += 'No categories exceed their budget.\n';
+    }
+    else {
+      for (const item of overages){
+        report += `* ${item.category} exceeded its budget by $${item.overage.toFixed(2)} (${item.percentage.toFixed(1)}% of budget)\n`;
+      }
+    }
+
+    report += 'Overage Transactions:\n'
+    if (contributingTransactions.length === 0){
+      report += 'No overage transactions\n';
+    }
+    else {
+      for (const trns of contributingTransactions){
+        const amount = Math.abs(trns.amount).toFixed(2);
+        report += `* [${trns.category}] $${amount} - ${trns.description || 'No description'}\n`
+      }
+    }
+
+    return report;
   }
 }
