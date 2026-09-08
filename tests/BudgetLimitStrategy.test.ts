@@ -50,8 +50,8 @@ describe('BudgetLimitStrategy (Feature 1)', () => {
     const result = await strategy.execute(testTransactions);
 
     expect(spy).toHaveBeenCalled();
-    expect(result).toContain('* Food exceeded its budget by $100.00 (200% of budget)');
-    expect(result).toContain('* Rent exceeded its budget by $500.00 (150% of budget)');
+    expect(result).toContain('* Food exceeded its budget by $100 (200% of budget)');
+    expect(result).toContain('* Rent exceeded its budget by $500 (150% of budget)');
   });
 
   it('should list the specific transactions contributing to categories that are over budget',async()=>{
