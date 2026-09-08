@@ -23,6 +23,10 @@ export class BudgetLimitStrategy implements AuditStrategy {
       throw new Error("Failed to retrieve budgets");
     }
 
+    if(budgets.length === 0 || transactions.length === 0){
+      return "No expenses to show";
+    }
+
     // 2. Group expenses (amounts < 0) by category and compute total spending for each category.
     const spending: Record<string, number> = {};
 
