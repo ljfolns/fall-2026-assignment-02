@@ -68,7 +68,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     const overageCategories = new Set(overages.map((o) => o.category));
     const contributingTransactions = transactions.filter((transaction) => transaction.amount < 0 && overageCategories.has(transaction.category));
 
-    let report = 'Budget Audit Report:\nCategory Summaries:';
+    let report = 'Budget Audit Report:\nCategory Summaries:\n';
     for (const category in budgets){
       const limit = budgets[category];
       const spent = spending[category] || 0;
