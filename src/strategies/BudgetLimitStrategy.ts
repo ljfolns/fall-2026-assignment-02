@@ -72,7 +72,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     for (const category in budgets){
       const limit = budgets[category];
       const spent = spending[category] || 0;
-      report += `* ${category}: Budget = $${limit.toFixed(2)}, Spent = $${spent.toFixed(2)}\n`;
+      report += `* ${category}: Budget = $${limit}, Spent = $${spent}\n`;
     }
 
     report += 'Categories over budget:\n';
@@ -81,7 +81,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     }
     else {
       for (const item of overages){
-        report += `* ${item.category} exceeded its budget by $${item.overage.toFixed(2)} (${item.percentage.toFixed(1)}% of budget)\n`;
+        report += `* ${item.category} exceeded its budget by $${item.overage} (${item.percentage}% of budget)\n`;
       }
     }
 
@@ -91,7 +91,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     }
     else {
       for (const trns of contributingTransactions){
-        const amount = Math.abs(trns.amount).toFixed(2);
+        const amount = Math.abs(trns.amount);
         report += `* [${trns.category}] $${amount} - ${trns.description || 'No description'}\n`
       }
     }
