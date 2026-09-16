@@ -24,6 +24,8 @@ describe('BudgetLimitStrategy (Feature 1)', () => {
     expect(result).toContain('Food');
     expect(result).toContain('Food exceeded its budget');
     expect(result).not.toContain('Rent exceeded its budget');
+    expect(result).toContain('* Rent: Budget = $1000, Spent = $900');
+
   });
 
   it('should group expenses correctly by category and sum them', async()=>{
@@ -38,6 +40,8 @@ describe('BudgetLimitStrategy (Feature 1)', () => {
     expect(spy).toHaveBeenCalled();
     expect(result).toContain('Food');
     expect(result).toContain('Food: Budget = $100');
+    expect(result).toContain('* Food: Budget = $100, Spent = $1000');
+
   });
 
   it('should calculate absolute overage amounts and percentage exceeded', async()=>{
@@ -50,8 +54,8 @@ describe('BudgetLimitStrategy (Feature 1)', () => {
     const result = await strategy.execute(testTransactions);
 
     expect(spy).toHaveBeenCalled();
-    expect(result).toContain('* Food exceeded its budget by $100 (200% of budget)');
-    expect(result).toContain('* Rent exceeded its budget by $500 (150% of budget)');
+    expect(result).toContain('* Food exceeded its budget by $100 (200.00% of budget)');
+    expect(result).toContain('* Rent exceeded its budget by $500 (150.00% of budget)');
   });
 
   it('should list the specific transactions contributing to categories that are over budget',async()=>{
@@ -90,6 +94,6 @@ describe('BudgetLimitStrategy (Feature 1)', () => {
     const result = await strategy.execute(testTransactions);
 
     expect(spy).toHaveBeenCalled();
-    expect(result).toContain('No expenses to show');
+    expect(result).toContain('Not enough information given to generate report');
   });
 });
