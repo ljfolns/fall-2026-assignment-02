@@ -24,7 +24,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     }
 
     if(budgets.length === 0 || transactions.length === 0){
-      return "No expenses to show";
+      return "Not enough information given to generate report";
     }
 
     // 2. Group expenses (amounts < 0) by category and compute total spending for each category.
@@ -81,7 +81,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     }
     else {
       for (const item of overages){
-        report += `* ${item.category} exceeded its budget by $${item.overage} (${item.percentage}% of budget)\n`;
+        report += `* ${item.category} exceeded its budget by $${item.overage} (${item.percentage.toFixed(2)}% of budget)\n`;
       }
     }
 
